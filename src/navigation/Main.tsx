@@ -30,7 +30,7 @@ if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<NavigatorParamList>();
 
 type userFieldOptions = {
   [key: string]: string;
@@ -40,6 +40,14 @@ export interface IUserState {
   isLoaded: boolean;
   isLoggedIn: boolean;
 }
+
+export type NavigatorParamList = {
+  Login: undefined; //meaning no params for screen component with name="signup"
+  Register: undefined;
+  Home: undefined;
+  // Login: { userId: string };
+  // Feed: { sort: 'latest' | 'top' } | undefined;
+};
 
 const Main: FC = () => {
   const initialState = {
@@ -90,7 +98,11 @@ const Main: FC = () => {
             component={LoginScreen}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen
+            name="Register"
+            component={RegisterScreen}
+            options={{ headerShown: false }}
+          />
           {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
         </Stack.Navigator>
       </NavigationContainer>
