@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Text, View, Button, TouchableOpacity, Alert } from "react-native";
 import tailwind from "tailwind-rn";
 import { StackNavigationProp } from "@react-navigation/stack";
+import firebase from "firebase";
+
 import { NavigatorParamList } from "../navigation/Main";
 import Input from "../components/input";
 import StyledButton from "../components/button";
@@ -28,7 +30,19 @@ const Login: React.FC<LoginProps> = (props) => {
   const [userState, setUserState] = useState<IUserState>(initialState);
 
   const signIn = async () => {
-    Alert.alert("hello");
+    try {
+      const { email, password } = userState;
+      const resp = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
+      //   if (!resp.user) {
+      //     console.log("not done");
+      //   }
+      console.log({ resp });
+    } catch (err) {
+      console.log({ err });
+      //   setUserState({...userState, errorText: err.message })
+    }
   };
 
   return (
@@ -42,7 +56,7 @@ const Login: React.FC<LoginProps> = (props) => {
 
       <Input
         placeholder="Password"
-        onChangeText={(text) => setUserState({ ...userState, email: text })}
+        onChangeText={(text) => setUserState({ ...userState, password: text })}
         secureTextEntry
       />
 
