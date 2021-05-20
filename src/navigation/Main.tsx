@@ -1,15 +1,9 @@
 // import { StatusBar } from "expo-status-bar";
 import React, { FC, useEffect, useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  LogBox,
-  Platform,
-  SafeAreaView,
-  ActivityIndicator,
-} from "react-native";
+import { Text, View, LogBox, Platform, ActivityIndicator } from "react-native";
 import firebase from "firebase";
+
+import { Provider } from "react-redux";
 
 // import { Provider } from "react-redux";
 // import store from "./src/redux/store";
@@ -17,6 +11,7 @@ import firebase from "firebase";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
+import store from "../redux/store";
 // import LandingScreen from "./src/components/auth/Landing";
 import RegisterScreen from "../screens/Register";
 import LoginScreen from "../screens/Login";
@@ -111,19 +106,19 @@ const Main: FC = () => {
 
   return (
     <>
-      {/* <Provider store={store}> */}
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            // options={{ headerShown: false }}
-          />
-          {/* <Stack.Screen name="Add" component={AddScreen} />
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              // options={{ headerShown: false }}
+            />
+            {/* <Stack.Screen name="Add" component={AddScreen} />
             <Stack.Screen name="Save" component={SaveScreen} /> */}
-        </Stack.Navigator>
-      </NavigationContainer>
-      {/* </Provider> */}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     </>
   );
 };
