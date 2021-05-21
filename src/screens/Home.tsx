@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -59,9 +59,13 @@ const Home: FC<HomeProps> = (props) => {
 
         <Tab.Navigator
           initialRouteName="Posts"
-          labeled={false}
+          labeled={true}
           activeColor="#fafafa"
-          barStyle={{ backgroundColor: "indigo", paddingBottom: 0 }}
+          barStyle={{
+            backgroundColor: "indigo",
+            paddingBottom: 0,
+          }}
+          //   shifting={true}
         >
           <Tab.Screen
             name="Posts"
@@ -88,7 +92,7 @@ const Home: FC<HomeProps> = (props) => {
 /> */}
 
           <Tab.Screen
-            name="AddContainer"
+            name="Post New Incident"
             component={EmptyScreen}
             listeners={({ navigation }) => ({
               tabPress: (event) => {
@@ -110,7 +114,8 @@ const Home: FC<HomeProps> = (props) => {
           <Tab.Screen
             name="Profile"
             component={Profile}
-            listeners={({ navigation }) => ({
+            listeners={({ route, navigation }) => ({
+              title: "Profile",
               tabPress: (event) => {
                 event.preventDefault();
                 navigation.navigate("Profile", {
@@ -119,6 +124,7 @@ const Home: FC<HomeProps> = (props) => {
               },
             })}
             options={{
+              tabBarLabel: "My Profile",
               tabBarIcon: ({ color }) => (
                 <MaterialCommunityIcons
                   name="account-circle"

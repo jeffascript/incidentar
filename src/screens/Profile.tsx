@@ -62,7 +62,7 @@ const Profile: React.FC = (props: any) => {
           )}
         >
           <Text>Email: {user.email}</Text>
-          <Text>Name: {user.name}</Text>
+          <Text>Full name: {user.name}</Text>
           <Text>Role: {user.role}</Text>
 
           <Button title="Logout" onPress={onLogout} />

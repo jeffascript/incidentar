@@ -117,7 +117,29 @@ const Main: FC = () => {
             <Stack.Screen
               name="Home"
               component={Home}
-              options={{ headerShown: false }}
+              //   options={({ route, navigation }) => ({
+              //     // title: route.name,
+              //     headerShown: true,
+              //     headerStyle: {
+              //       backgroundColor: "indigo",
+              //     },
+              //     headerTintColor: "#fff",
+              //     headerTitleStyle: {
+              //       fontWeight: "bold",
+              //     },
+              //   })}
+
+              options={{
+                headerShown: true,
+                title: "Incidentar",
+                headerStyle: {
+                  backgroundColor: "indigo",
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                  fontWeight: "bold",
+                },
+              }}
             />
             <Stack.Screen name="Add" component={Add} />
             <Stack.Screen name="Save" component={Save} />
