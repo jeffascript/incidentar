@@ -29,6 +29,12 @@ TypeScript is a superset of JavaScript which gives you static types and powerful
 - Run `expo start` to automatically configure TypeScript
 - Rename files to TypeScript, `.tsx` for React components and `.ts` for plain typescript files
 
-## 📝 Notes
+## 📝 TODO
+
+- Login and Register Screens
+- Redux
+- Posts and Profile Screens
+- Logout
+- Fetch an Make Posts
 
 - [Expo TypeScript guide](https://docs.expo.io/versions/latest/guides/typescript/)
