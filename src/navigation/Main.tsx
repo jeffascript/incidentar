@@ -20,12 +20,12 @@ import Home from "../screens/Home";
 // import SaveScreen from "./src/components/main/Save";
 
 import { firebaseConfig } from "../utils/firebase";
+import Add from "../screens/Add";
+import Save from "../screens/Save";
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
-
-const Stack = createStackNavigator<NavigatorParamList>();
 
 type userFieldOptions = {
   [key: string]: string;
@@ -40,9 +40,13 @@ export type NavigatorParamList = {
   Login: undefined; //meaning no params for screen component with name="signup"
   Register: undefined;
   Home: undefined;
+  Add: undefined;
+  Save: undefined;
   // Login: { userId: string };
   // Feed: { sort: 'latest' | 'top' } | undefined;
 };
+
+const Stack = createStackNavigator<NavigatorParamList>();
 
 const Main: FC = () => {
   const initialState = {
@@ -112,10 +116,10 @@ const Main: FC = () => {
             <Stack.Screen
               name="Home"
               component={Home}
-              // options={{ headerShown: false }}
+              options={{ headerShown: false }}
             />
-            {/* <Stack.Screen name="Add" component={AddScreen} />
-            <Stack.Screen name="Save" component={SaveScreen} /> */}
+            <Stack.Screen name="Add" component={Add} />
+            <Stack.Screen name="Save" component={Save} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
