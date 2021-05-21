@@ -4,8 +4,9 @@ import {
   SerializedError,
 } from "@reduxjs/toolkit";
 import firebase from "firebase";
+import { AppDispatch } from "./store";
 
-interface UserData {
+export interface UserData {
   name: string;
   email: string;
   role: string;
@@ -43,6 +44,12 @@ export const fetchUser = createAsyncThunk(
   }
 );
 
+export const clearData = () => async (dispatch: AppDispatch) => {
+  dispatch(clearUserData()); //clear for user.slices
+  // dispatch(clearFollowData()); //clear for following.slices imported
+  // dispatch(clearUsersData()); //clear for  allUsers.slices imported
+};
+
 const initialState = {
   currentUser: null,
   loadingUserStatus: "idle",
@@ -52,7 +59,16 @@ const initialState = {
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    clearUserData: (state) => {
+      return {
+        ...state,
+        currentUser: null,
+        loadingUserStatus: "loading",
+        userDataError: null,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchUser.pending, (state) => {
       state.loadingUserStatus = "loading";
@@ -71,5 +87,7 @@ const userSlice = createSlice({
     });
   },
 });
+
+export const { clearUserData } = userSlice.actions;
 
 export default userSlice.reducer;

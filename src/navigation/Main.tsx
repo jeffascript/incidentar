@@ -42,6 +42,7 @@ export type NavigatorParamList = {
   Home: undefined;
   Add: undefined;
   Save: undefined;
+  Profile: undefined;
   // Login: { userId: string };
   // Feed: { sort: 'latest' | 'top' } | undefined;
 };

@@ -17,6 +17,7 @@ interface ILoginRouter {
 interface IUserState {
   email: string;
   password: string;
+  errorText: string;
 }
 
 export interface LoginProps extends ILoginRouter {}
@@ -25,6 +26,7 @@ const Login: React.FC<LoginProps> = (props) => {
   const initialState = {
     email: "",
     password: "",
+    errorText: "",
   };
 
   const [userState, setUserState] = useState<IUserState>(initialState);
@@ -41,7 +43,7 @@ const Login: React.FC<LoginProps> = (props) => {
       console.log({ resp });
     } catch (err) {
       console.log({ err });
-      //   setUserState({...userState, errorText: err.message })
+      setUserState({ ...userState, errorText: err.message });
     }
   };
 
@@ -59,6 +61,11 @@ const Login: React.FC<LoginProps> = (props) => {
         onChangeText={(text) => setUserState({ ...userState, password: text })}
         secureTextEntry
       />
+      {userState.errorText ? (
+        <Text style={tailwind("text-red-800 font-light")}>
+          {userState.errorText}
+        </Text>
+      ) : null}
 
       <StyledButton title="Sign In" onPress={signIn} />
 
