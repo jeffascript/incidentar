@@ -45,8 +45,11 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { State } from "react-native-gesture-handler";
+import firebase from "firebase";
+import { StackActions } from "@react-navigation/native";
+
 import styled from "styled-components/native";
+import Button from "../components/button";
 import Input from "../components/input";
 
 const ScreenWidth = Dimensions.get("window").width;
@@ -65,7 +68,7 @@ const StyledView = styled(View)`
 `;
 
 const StyledText = styled(Text)`
-  font-size: 30px;
+  font-size: 20px;
   color: ${(props) => (props.normal ? "indigo" : "#fff")};
   align-self: center;
 `;
@@ -96,10 +99,26 @@ const Add: FC = (props: any) => {
 
   const [selectedData, setSelectedData] = useState<AddState>(initialState);
 
+  const submitNewPost = async () => {
+    await firebase
+      .firestore()
+      .collection("posts")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userPosts")
+      .add({
+        ...selectedData,
+        creation: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .then(() => {
+        props.navigation.dispatch(StackActions.popToTop()); //used since it is a stack navigator, https://reactnavigation.org/docs/navigation-prop
+      });
+  };
+
   const renderItems = ({ item }) => (
     <>
       <StyledView>
         <TouchableOpacity
+          activeOpacity={0.3}
           onPress={
             () => setSelectedData({ ...selectedData, title: item.title })
 
@@ -115,12 +134,17 @@ const Add: FC = (props: any) => {
   return (
     <>
       <StyledContainer>
-        <StyledText normal> Select one</StyledText>
+        {selectedData.title ? (
+          <StyledText normal> {selectedData.title} Selected!!!</StyledText>
+        ) : (
+          <StyledText normal> Select one</StyledText>
+        )}
         <FlatList
           data={DATA}
           renderItem={renderItems}
           keyExtractor={(item) => item.id}
           numColumns={2}
+          horizontal={false}
         />
 
         {selectedData.title === "Other not mentioned" ? (
@@ -131,6 +155,11 @@ const Add: FC = (props: any) => {
             }
             textarea={true}
           />
+        ) : null}
+
+        {/* <Button title="submit" onPress={() => props.navigation.jumpTo("Profile", { selectedData }) } /> */}
+        {selectedData.title ? (
+          <Button title="submit" onPress={submitNewPost} />
         ) : null}
       </StyledContainer>
     </>

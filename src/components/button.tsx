@@ -9,7 +9,7 @@ export interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = (props) => {
   return (
-    <View style={tailwind("bg-purple-800 px-5 py-1.5 rounded-full my-2.5")}>
+    <View style={tailwind("bg-purple-800 px-12 py-2.5 rounded-full my-2.5")}>
       <TouchableOpacity
         //   title="Login"
         onPress={props.onPress}
