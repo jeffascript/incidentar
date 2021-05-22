@@ -4,6 +4,7 @@ import {
   SerializedError,
 } from "@reduxjs/toolkit";
 import firebase from "firebase";
+import { clearAllUsersData } from "./allUsers.slice";
 import { AppDispatch } from "./store";
 
 export interface UserData {
@@ -46,8 +47,7 @@ export const fetchUser = createAsyncThunk(
 
 export const clearData = () => async (dispatch: AppDispatch) => {
   dispatch(clearUserData()); //clear for user.slices
-  // dispatch(clearFollowData()); //clear for following.slices imported
-  // dispatch(clearUsersData()); //clear for  allUsers.slices imported
+  dispatch(clearAllUsersData()); //clear for  allUsers.slices imported
 };
 
 const initialState = {

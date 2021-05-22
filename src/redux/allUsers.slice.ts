@@ -8,39 +8,30 @@ import { AppDispatch, RootState } from "./store";
 
 import { UserData } from "./user.slice";
 
-interface Posts {
+interface IPosts {
   comments?: string;
   creation: string;
   title: string;
 }
 
 interface IAllUsers extends UserData {
-  posts?: Posts[];
+  uid?: string;
+  posts?: IPosts[];
   postError?: string | null | SerializedError;
 }
 
-type UserState = {
+interface IUserState {
   users: IAllUsers[]; // alternatively:  firebase.firestore.DocumentData
   loadingUsersStatus: "idle" | "loading";
   usersLoadedCount: number;
   usersDataError: string | null | SerializedError;
-};
+}
 
-// const initialState = {
-//   users: [],
-//   usersLoadedCount: 0,
-//   usersDataError: null,
-// } as UserState;
-
-// async getMarkers() {
-//     const events = await firebase.firestore().collection('events')
-//     events.get().then((querySnapshot) => {
-//         const tempDoc = querySnapshot.docs.map((doc) => {
-//           return { id: doc.id, ...doc.data() }
-//         })
-//         console.log(tempDoc)
-//       })
-//   }
+/**
+ * fetch all Users id in the collection with onSnapshot,
+ * foreach of the ids above--> attach a fetchUserWithData from
+ * above will be attached with fetchUsersPosts in order to get the posts for that user
+ */
 
 const listenerUnsubscribeList = [];
 export const fetchAllUsers = () => {
@@ -70,12 +61,6 @@ export const fetchAllUsers = () => {
     listenerUnsubscribeList.push(unsubscribe);
   };
 };
-
-/**
- * fetch all Users id in the collection with onSnapshot,
- * foreach of the ids above--> attach a fetchUserWithData from
- * above will be attached with fetchUsersPosts in order to get the posts for that user
- */
 
 export const fetchUsersData = createAsyncThunk(
   "users/fetchData",
@@ -126,12 +111,13 @@ export const fetchUsersPosts = createAsyncThunk(
         .collection("userPosts")
         .orderBy("creation", "asc")
         .get()
-        .then((snapshot: any) => {
+        .then((snapshot: firebase.firestore.DocumentData) => {
           console.log({ snapshot });
 
           //cf: https://stackoverflow.com/questions/38731620/firebase-query-based-on-child-prop-value-and-get-path
-          //   const uid = snapshot.query.Hf.path.segments[1];//this is an array containing each step of the path. so if the actual path is for example foo/bar/baz, this will show as ["foo","bar","baz"], which obviously you can read out with
-          const uid: any = snapshot._delegate.query._query.T.path.segments[1]; // I had to inspect resolved snapshot above to get this value
+          //this is an array containing each step of the path. so if the actual path is for example foo/bar/baz, this will show as ["foo","bar","baz"], which obviously you can read out with
+          const uid: string =
+            snapshot._delegate.query._query.T.path.segments[1]; // I had to inspect resolved snapshot above to get this value
 
           console.log({ uid });
           const rootState = thunkAPI.getState() as RootState;
@@ -139,20 +125,15 @@ export const fetchUsersPosts = createAsyncThunk(
 
           // console.log(snapshot.docs[0].data());
           // Querying a collection from Cloud Firestore (doc => collection => field) //map the docs and do a get data method for each ===> .data()
-          const response = snapshot.docs.map((doc) => {
-            const data = doc.data();
-            const id = doc.id;
-            return { id, ...data, user };
-          });
+          const response = snapshot.docs.map(
+            (doc: { data: () => IPosts; id: string }) => {
+              const data = doc.data();
+              const id = doc.id;
+              return { id, ...data, user };
+            }
+          );
 
-          //   console.log("fetchUsersFollowingPosts => posts", response);
-
-          //   console.log(
-          //     "fetchUsersFollowingPosts => getState",
-          //     thunkAPI.getState()
-          //   );
-
-          return response;
+          return response as IUserState;
           // if (snapshot.exists) {
           //   console.log({ thunkAPI });
           //   console.log(snapshot.docs);
@@ -163,17 +144,16 @@ export const fetchUsersPosts = createAsyncThunk(
     } catch (err) {
       console.log(err);
       const error = rejectWithValue(err);
-      // thunkAPI.dispatch(fetchUsersPostsFailure(error)); // action for the reducer dispatched here to rejected
+      thunkAPI.dispatch(fetchUsersPostsFailure(error)); // action for the reducer dispatched here to rejected
     }
   }
 );
 
 const initialState = {
   users: [],
-  loadingUsersStatus: "idle",
   usersLoadedCount: 0,
   usersDataError: null,
-};
+} as IUserState;
 
 const allUsers = createSlice({
   name: "allUsers",
@@ -195,7 +175,6 @@ const allUsers = createSlice({
 
     fetchUsersPostsSuccess: (state, action) => {
       state.usersLoadedCount = state.usersLoadedCount + 1; //increment the numbers by 1 everytime new user was added
-      // state.users.push(action.payload);
       state.loadingUsersStatus = "idle";
 
       if (action.payload.length > 0) {
@@ -219,14 +198,14 @@ const allUsers = createSlice({
       }
     },
 
-    //   clearUserData: (state) => {
-    //     return {
-    //       ...state,
-    //       currentUser: null,
-    //       loadingUserStatus: "loading",
-    //       userDataError: null,
-    //     };
-    //   },
+    clearAllUsersData: (state) => {
+      return {
+        ...state,
+        users: [],
+        usersLoadedCount: 0,
+        usersDataError: null,
+      };
+    },
   },
   //   extraReducers: () => {},
 });
@@ -237,6 +216,7 @@ export const {
   fetchUsersSuccess,
   fetchUsersPostsSuccess,
   fetchUsersPostsFailure,
+  clearAllUsersData,
 } = allUsers.actions;
 
 export default allUsers.reducer;
