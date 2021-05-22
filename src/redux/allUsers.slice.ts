@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import {
   createSlice,
   createAsyncThunk,
@@ -9,9 +10,11 @@ import { AppDispatch, RootState } from "./store";
 import { UserData } from "./user.slice";
 
 interface IPosts {
+  id: string;
   comments?: string;
   creation: string;
   title: string;
+  status: string;
 }
 
 interface IAllUsers extends UserData {
@@ -33,32 +36,65 @@ interface IUserState {
  * above will be attached with fetchUsersPosts in order to get the posts for that user
  */
 
-const listenerUnsubscribeList = [];
+// export const fetchAllUsers = createAsyncThunk(
+//   "users/fetchAllUsers",
+//   (_, thunkAPI) =>
+//     new Promise((resolve, reject) => {
+//       try {
+//         firebase
+//           .firestore()
+//           .collection("users")
+//           .onSnapshot(
+//             (snapshot) => {
+//               let uidsArr = snapshot.docs.map((doc) => doc.id);
+//               // resolve(uidsArr);
+//               //   thunkAPI.dispatch(tester(following));
+
+//               for (let oneUid of uidsArr) {
+//                 thunkAPI.dispatch(fetchUsersData(oneUid));
+//               }
+
+//               return uidsArr;
+//             },
+//             (error) => {
+//               reject(error);
+//             }
+//           );
+//         //listenerUnsubscribeList.push(unsubscribe); // a function that unsubscribes the listener is pushed into an array list
+
+//         //console.log({ listenerUnsubscribeList });
+//       } catch (err) {
+//         console.log(err);
+//         thunkAPI.dispatch(fetchUsersFailure(err));
+//         //   return thunkAPI.rejectWithValue( err);
+//       }
+//     })
+// );
+
+let listenerUnsubscribeList = [];
 export const fetchAllUsers = () => {
-  return (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch) => {
     dispatch(fetchUsersPending());
-    const unsubscribe = firebase
+    // const unsubscribe = await
+    firebase
       .firestore()
       .collection("users")
       .onSnapshot(
         (snapshot) => {
-          const uids = snapshot.docs.map((doc) => doc.id);
-
-          for (let oneUid of uids) {
-            dispatch(fetchUsersData(oneUid));
+          if (snapshot) {
+            // dispatch(fetchUsersPending());
+            console.log("new event happened");
+            const uids = snapshot.docs.map((doc) => doc.id);
+            for (let oneUid of uids) {
+              dispatch(fetchUsersData(oneUid));
+            }
           }
-
-          //   dispatch(
-          //     fetchUsersSuccess(
-          //       snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-          //     )
-          //   );
         },
         (error) => {
           dispatch(fetchUsersFailure(error));
         }
       );
-    listenerUnsubscribeList.push(unsubscribe);
+    // listenerUnsubscribeList.push(unsubscribe);
   };
 };
 
@@ -92,12 +128,6 @@ export const fetchUsersData = createAsyncThunk(
     }
   }
 );
-
-/**
- * fetch all Users id in the collection with onSnapshot,
- * foreach of the ids above--> attach a fetchUserWithData from
- * above will be attached with fetchUsersPosts in order to get the posts for that user
- */
 
 export const fetchUsersPosts = createAsyncThunk(
   "users/posts",
@@ -134,11 +164,6 @@ export const fetchUsersPosts = createAsyncThunk(
           );
 
           return response as IUserState;
-          // if (snapshot.exists) {
-          //   console.log({ thunkAPI });
-          //   console.log(snapshot.docs);
-          //   return snapshot.data();
-          // }
         });
       thunkAPI.dispatch(fetchUsersPostsSuccess(promise)); // action for the reducer dispatched here to fulfilled
     } catch (err) {
@@ -151,6 +176,7 @@ export const fetchUsersPosts = createAsyncThunk(
 
 const initialState = {
   users: [],
+  loadingUsersStatus: "idle",
   usersLoadedCount: 0,
   usersDataError: null,
 } as IUserState;

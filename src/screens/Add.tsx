@@ -37,7 +37,7 @@
 
 // export default Add;
 
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   View,
   FlatList,
@@ -51,6 +51,9 @@ import { StackActions } from "@react-navigation/native";
 import styled from "styled-components/native";
 import Button from "../components/button";
 import Input from "../components/input";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { fetchAllUsers } from "../redux/allUsers.slice";
 
 const ScreenWidth = Dimensions.get("window").width;
 
@@ -81,6 +84,13 @@ type data = {
 interface AddState {
   title: string;
   comments?: string;
+  status: string;
+}
+
+enum Status {
+  new = "new",
+  wip = "work in progress",
+  done = "done",
 }
 
 const DATA = [
@@ -95,9 +105,16 @@ const Add: FC = (props: any) => {
   const initialState = {
     title: "",
     comments: "",
+    status: Status.new,
   };
 
   const [selectedData, setSelectedData] = useState<AddState>(initialState);
+
+  const dispatch = useDispatch();
+  const {
+    user: { currentUser, userDataError, loadingUserStatus },
+    allUsers: { users, loadingUsersStatus },
+  } = useSelector((state: RootState) => state);
 
   const submitNewPost = async () => {
     await firebase
@@ -110,7 +127,14 @@ const Add: FC = (props: any) => {
         creation: firebase.firestore.FieldValue.serverTimestamp(),
       })
       .then(() => {
+        setTimeout(() => {
+          dispatch(fetchAllUsers());
+        }, 50);
+
+        // dispatch(fetchAllUsers()); //refetch with current posts
         props.navigation.dispatch(StackActions.popToTop()); //used since it is a stack navigator, https://reactnavigation.org/docs/navigation-prop
+        // props.navigation.navigate("Home", { refresh: true });
+        //props.navigation.dispatch(StackActions.push("Posts"));
       });
   };
 

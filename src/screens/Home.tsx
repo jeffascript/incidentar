@@ -4,6 +4,8 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -12,10 +14,19 @@ import { fetchUser } from "../redux/user.slice";
 import { fetchAllUsers } from "../redux/allUsers.slice";
 import Posts from "./Posts";
 import Profile from "./Profile";
+import { NavigatorParamList } from "../navigation/Main";
+
+//StackNavigationProp ==> for navigation type | RouteProp ==> for prop type
+
+type HomeNavProp = RouteProp<NavigatorParamList, "Home">;
+type HomeNavigator = StackNavigationProp<NavigatorParamList, "Home">;
+interface IHomeRouter {
+  route: HomeNavProp;
+  navigation: HomeNavigator;
+}
+export interface HomeProps extends IHomeRouter {}
 
 const Tab = createMaterialBottomTabNavigator();
-
-export interface HomeProps {}
 
 const EmptyScreen = () => {
   return null;
@@ -25,12 +36,12 @@ const Home: FC<HomeProps> = (props) => {
   const dispatch = useDispatch();
   const {
     user: { currentUser, userDataError, loadingUserStatus },
-    allUsers: { users },
+    allUsers: { users, loadingUsersStatus },
   } = useSelector((state: RootState) => state);
 
   useEffect(() => {
     dispatch(fetchUser());
-    dispatch(fetchAllUsers());
+    // dispatch(fetchAllUsers());
   }, []);
 
   console.log({ users });
