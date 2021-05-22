@@ -15,23 +15,41 @@ const StyledViewContainer = styled(View)`
 `;
 
 const StyledInput = styled(TextInput)`
-  padding: 15px;
+  padding: ${({ textarea }) => (textarea ? "10px" : "15px")};
+`;
+
+const StyledTextArea = styled(TextInput)`
+  height: 150px;
+  justify-content: flex-start;
+  padding: 10px;
 `;
 
 export interface InputProps {
   placeholder: string;
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
+  textarea?: boolean;
 }
 
 const Input: FC<InputProps> = (props) => {
   return (
     <StyledViewContainer>
-      <StyledInput
-        placeholder={props.placeholder}
-        onChangeText={props.onChangeText}
-        secureTextEntry={props.secureTextEntry || false}
-      />
+      {props.textarea ? (
+        <StyledTextArea
+          placeholder={props.placeholder}
+          onChangeText={props.onChangeText}
+          secureTextEntry={props.secureTextEntry || false}
+          multiline={true}
+          //   numberOfLines={"10"}
+          textAlignVertical="top"
+        />
+      ) : (
+        <StyledInput
+          placeholder={props.placeholder}
+          onChangeText={props.onChangeText}
+          secureTextEntry={props.secureTextEntry || false}
+        />
+      )}
     </StyledViewContainer>
   );
 };

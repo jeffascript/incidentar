@@ -76,20 +76,20 @@ const Home: FC<HomeProps> = (props) => {
               ),
             }}
           />
-
-          {/* <Tab.Screen
-  name="Search"
-  component={SearchScreen}
-  options={{
-    tabBarIcon: ({ color, size }) => (
-      <MaterialCommunityIcons
-        name="account-search"
-        color={color}
-        size={26}
-      />
-    ),
-  }}
-/> */}
+          {/* 
+          <Tab.Screen
+            name="Search"
+            component={SearchScreen}
+            options={{
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons
+                  name="account-search"
+                  color={color}
+                  size={26}
+                />
+              ),
+            }}
+          /> */}
 
           <Tab.Screen
             name="Post New Incident"
