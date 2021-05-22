@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
 import { fetchUser } from "../redux/user.slice";
+import { fetchAllUsers } from "../redux/allUsers.slice";
 import Posts from "./Posts";
 import Profile from "./Profile";
 
@@ -22,15 +23,17 @@ const EmptyScreen = () => {
 
 const Home: FC<HomeProps> = (props) => {
   const dispatch = useDispatch();
-  const { currentUser, userDataError, loadingUserStatus } = useSelector(
-    (state: RootState) => state.user
-  );
+  const {
+    user: { currentUser, userDataError, loadingUserStatus },
+    allUsers: { users },
+  } = useSelector((state: RootState) => state);
 
   useEffect(() => {
     dispatch(fetchUser());
+    dispatch(fetchAllUsers());
   }, []);
 
-  console.log({ currentUser });
+  console.log({ users });
 
   if (loadingUserStatus === "loading") {
     return (
