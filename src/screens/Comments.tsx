@@ -71,7 +71,7 @@ const Comments: FC<CommentsProps> = (props) => {
       .add({
         ...newComment,
         creation: firebase.firestore.Timestamp.now(),
-        currentUser,
+        commentedBy: currentUser,
       })
       .then(() => {
         console.log("done");

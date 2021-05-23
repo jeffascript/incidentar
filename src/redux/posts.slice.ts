@@ -1,3 +1,4 @@
+import { fetchUsersCommentsOnly } from "./comments.slice";
 import {
   createSlice,
   createAsyncThunk,
@@ -111,6 +112,7 @@ export const fetchUsersPostsOnly = (uid: string, userData: UserData) => {
                   posterUid: uid,
                 })
               );
+              dispatch(fetchUsersCommentsOnly(uid, id, userData)); //userUID, PostUID,userData{name,role,email}
             }
             // return { id, ...data, postCreator: userData };
           });
