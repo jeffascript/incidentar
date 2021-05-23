@@ -19,7 +19,7 @@ export interface Comment {
   postComment: string;
 }
 
-export interface CommentsArr {
+export interface ICommentsArr {
   commentId: string;
   commentData: Comment;
   parentPostUid?: string;
@@ -27,7 +27,7 @@ export interface CommentsArr {
 }
 
 interface ICommentsState {
-  comments: CommentsArr[]; // alternatively:  firebase.firestore.DocumentData
+  comments: ICommentsArr[]; // alternatively:  firebase.firestore.DocumentData
   commentsStatus: "idle" | "loading";
   commentsCount: number;
   commentsDataError: string | null | SerializedError;

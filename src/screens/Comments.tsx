@@ -5,12 +5,13 @@ import { FlatList, Text, View } from "react-native";
 import { Badge, Avatar, ListItem } from "react-native-elements";
 import tailwind from "tailwind-rn";
 import firebase from "firebase";
+import { useDispatch, useSelector } from "react-redux";
 
-import { useSelector } from "react-redux";
-
+import { fetchPosts } from "../redux/posts.slice";
 import { NavigatorParamList } from "../navigation/Main";
 import { RootState } from "../redux/store";
 import { IPosts } from "../redux/posts.slice";
+import { ICommentsArr } from "../redux/comments.slice";
 import Input from "../components/input";
 import Button from "../components/button";
 
@@ -30,22 +31,40 @@ interface AddCommentState {
 export interface CommentsProps extends ICommentsRouter {}
 
 const Comments: FC<CommentsProps> = (props) => {
-  const [currentPost, setCurrentPost] = useState<IPosts>(null);
-
   const initialState = {
     postComment: "",
     // status: Status.new,
   };
 
+  const [currentPost, setCurrentPost] = useState<IPosts>(null);
   const [newComment, setNewComment] = useState<AddCommentState>(initialState);
+  const [stateComments, setStateComments] = useState<ICommentsArr[]>([]);
 
-  console.log(props.route.params); //post uid check
+  console.log("commentsScreen", props.route.params); //post uid check
 
   const {
     user: { currentUser, userDataError, loadingUserStatus },
     allUsers: { users, loadingUsersStatus, usersLoadedCount },
     allPosts: { posts, postsCount, postsDataError, postsStatus },
+    allComments: { comments, commentsCount, commentsDataError, commentsStatus },
   } = useSelector((state: RootState) => state);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const findCommentsByPostId = () => {
+      if (props.route.params.uid) {
+        const commentsForPost = comments.filter(
+          (comment) => comment.parentPostUid === props.route.params.uid
+        );
+
+        setStateComments(commentsForPost);
+
+        // stateComments, setStateComments
+      }
+    };
+    findCommentsByPostId();
+  }, [props.route.params.uid]);
 
   useEffect(() => {
     const findPostById = () => {
@@ -75,6 +94,7 @@ const Comments: FC<CommentsProps> = (props) => {
       })
       .then(() => {
         console.log("done");
+        dispatch(fetchPosts());
 
         // setTimeout(() => {
         //   dispatch(fetchAllUsers());
@@ -103,21 +123,21 @@ const Comments: FC<CommentsProps> = (props) => {
       <Avatar
         rounded
         size="small"
-        title={item.postCreator.name.charAt(0)}
+        title={item.commentData.commentedBy.name.charAt(0)}
         containerStyle={{ backgroundColor: "#BDBDBD" }}
       />
       <ListItem.Content>
         <ListItem.Title> </ListItem.Title>
         <ListItem.Subtitle>
           <Text style={tailwind("text-green-700 font-bold")}>
-            {item.postCreator.name}
+            {item.commentData.commentedBy.name}
           </Text>{" "}
-          {item.title}{" "}
+          {item.commentData.postComment}{" "}
         </ListItem.Subtitle>
         <ListItem.Subtitle>
           <Text style={tailwind("text-gray-300")}>
             {" "}
-            {new Date(item.creation.seconds * 1000)
+            {new Date(item.commentData.creation.seconds * 1000)
               .toISOString()
               .substr(11, 8)}{" "}
           </Text>
@@ -189,13 +209,19 @@ const Comments: FC<CommentsProps> = (props) => {
 
       {/* comments starts here */}
 
-      <View style={tailwind("flex-1 ")}>
-        <FlatList
-          keyExtractor={keyExtractor}
-          data={posts}
-          renderItem={renderItem}
-        />
-      </View>
+      {stateComments.length > 0 ? (
+        <View style={tailwind("flex-1 ")}>
+          <FlatList
+            keyExtractor={keyExtractor}
+            data={stateComments}
+            renderItem={renderItem}
+          />
+        </View>
+      ) : (
+        <View>
+          <Text>No comment for this post ...</Text>
+        </View>
+      )}
     </View>
   );
 };
