@@ -89,7 +89,7 @@ export const fetchUsersPostsOnly = (uid: string, userData: UserData) => {
 
           console.log({ uid });
 
-          const response = snapshot.docs.map((doc) => {
+          snapshot.docs.map((doc) => {
             const data = doc.data();
             const id = doc.id;
             const found = store
