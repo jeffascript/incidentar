@@ -5,6 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import firebase from "firebase";
 import { clearAllUsersData } from "./allUsers.slice";
+import { clearAllPostsData } from "./posts.slice";
 import { AppDispatch } from "./store";
 
 export interface UserData {
@@ -48,6 +49,7 @@ export const fetchUser = createAsyncThunk(
 export const clearData = () => async (dispatch: AppDispatch) => {
   dispatch(clearUserData()); //clear for user.slices
   dispatch(clearAllUsersData()); //clear for  allUsers.slices imported
+  dispatch(clearAllPostsData()); //clear for  posts.slices imported
 };
 
 const initialState = {
