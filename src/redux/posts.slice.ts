@@ -84,7 +84,7 @@ export const fetchUsersPostsOnly = (uid: string, userData: UserData) => {
       .collection("posts")
       .doc(uid)
       .collection("userPosts")
-      .orderBy("creation", "asc")
+      .orderBy("creation", "desc")
       .onSnapshot(
         (snapshot) => {
           console.log({ snapshotPost2: snapshot });
@@ -148,7 +148,7 @@ const allPosts = createSlice({
       if (action.payload) {
         state.postsCount = state.postsCount + 1;
         console.log("payload", action.payload); //returns an array
-        state.posts = [...state.posts, action.payload]; // alternatively, -:  state.posts.push(action.payload[0]); [... breaks open the array an dreturns the bare obj]
+        state.posts = [action.payload, ...state.posts]; // alternatively, -:  state.posts.push(action.payload[0]); [... breaks open the array an dreturns the bare obj]
         //state.posts = [...new Set(state.posts.concat(action.payload))]; //set the two arrays and remove duplicates
 
         //     state.posts = state.posts.map((post) => {

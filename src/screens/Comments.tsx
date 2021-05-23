@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { RouteProp } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { FlatList, Text, View } from "react-native";
-import { Badge, Avatar, ListItem } from "react-native-elements";
+import { Badge, Avatar, ListItem, Button } from "react-native-elements";
 import tailwind from "tailwind-rn";
 import firebase from "firebase";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +13,8 @@ import { RootState } from "../redux/store";
 import { IPosts } from "../redux/posts.slice";
 import { ICommentsArr } from "../redux/comments.slice";
 import Input from "../components/input";
-import Button from "../components/button";
+// import Button from "../components/button";
+import { fetchAllUsers } from "../redux/allUsers.slice";
 
 type CommentsNavProp = RouteProp<NavigatorParamList, "Comments">;
 type CommentsNavigator = StackNavigationProp<NavigatorParamList, "Comments">;
@@ -52,21 +53,6 @@ const Comments: FC<CommentsProps> = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const findCommentsByPostId = () => {
-      if (props.route.params.uid) {
-        const commentsForPost = comments.filter(
-          (comment) => comment.parentPostUid === props.route.params.uid
-        );
-
-        setStateComments(commentsForPost);
-
-        // stateComments, setStateComments
-      }
-    };
-    findCommentsByPostId();
-  }, [props.route.params.uid]);
-
-  useEffect(() => {
     const findPostById = () => {
       if (props.route.params.uid) {
         const newpost = posts.filter(
@@ -77,35 +63,43 @@ const Comments: FC<CommentsProps> = (props) => {
       }
     };
     findPostById();
-  }, [props.route.params.uid, props.route.params.posterUid]);
+  }, [props.route.params.uid, props.route.params.posterUid, posts]);
 
-  const submitNewComment = async () => {
-    await firebase
-      .firestore()
-      .collection("posts")
-      .doc(props.route.params.posterUid) //id of the user who posted
-      .collection("userPosts")
-      .doc(props.route.params.uid) //id of the post params.uid
-      .collection("comments")
-      .add({
-        ...newComment,
-        creation: firebase.firestore.Timestamp.now(),
-        commentedBy: currentUser,
-      })
-      .then(() => {
-        console.log("done");
-        dispatch(fetchPosts());
+  useEffect(() => {
+    const findCommentsByPostId = () => {
+      if (props.route.params.uid) {
+        const commentsForPost = comments.filter(
+          (comment) => comment.parentPostUid === props.route.params.uid
+        );
 
-        // setTimeout(() => {
-        //   dispatch(fetchAllUsers());
-        // }, 50);
-        // dispatch(fetchUsersPostsOnly(firebase.auth().currentUser.uid));
-        //dispatch(fetchAllUsers()); //refetch with current posts
-        //dispatch(fetchPosts());
-        // props.navigation.dispatch(StackActions.popToTop()); //used since it is a stack navigator, https://reactnavigation.org/docs/navigation-prop
-        // props.navigation.navigate("Home", { refresh: true });
-        //props.navigation.dispatch(StackActions.push("Posts"));
-      });
+        setStateComments(commentsForPost);
+      }
+    };
+    findCommentsByPostId();
+  }, [comments]);
+
+  const submitNewComment = async (): Promise<void> => {
+    if (newComment.postComment) {
+      await firebase
+        .firestore()
+        .collection("posts")
+        .doc(props.route.params.posterUid) //id of the user who posted
+        .collection("userPosts")
+        .doc(props.route.params.uid) //id of the post params.uid
+        .collection("comments")
+        .add({
+          ...newComment,
+          creation: firebase.firestore.Timestamp.now(),
+          commentedBy: currentUser,
+        })
+        .then(() => {
+          console.log("done");
+          //dispatch(fetchUsersCommentsOnly(uid, id, userData)); //userUID, PostUID,userData{name,role,email}
+          dispatch(fetchPosts());
+          dispatch(fetchAllUsers());
+          setNewComment(initialState);
+        });
+    }
   };
 
   if (!currentPost) {
@@ -203,11 +197,20 @@ const Comments: FC<CommentsProps> = (props) => {
             setNewComment({ ...newComment, postComment: text })
           }
           textarea={true}
+          value={newComment.postComment}
         />
-        <Button title="submit" onPress={submitNewComment} />
       </View>
 
       {/* comments starts here */}
+
+      <Button
+        title="submit"
+        onPress={submitNewComment}
+        raised
+        containerStyle={tailwind("mx-24  ")}
+        style={tailwind("  bg-indigo-200 ")}
+        type="outline"
+      />
 
       {stateComments.length > 0 ? (
         <View style={tailwind("flex-1 ")}>
@@ -218,7 +221,7 @@ const Comments: FC<CommentsProps> = (props) => {
           />
         </View>
       ) : (
-        <View>
+        <View style={tailwind("  flex-1 justify-center items-center")}>
           <Text>No comment for this post ...</Text>
         </View>
       )}

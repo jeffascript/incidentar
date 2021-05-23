@@ -89,8 +89,8 @@ const Posts: React.FC = (props: any) => {
         onPress={() => dispatch(fetchPosts())}
         style={tailwind("m-3 flex justify-center items-center")}
       /> */}
-      <View style={tailwind("flex justify-center items-center")}>
-        <Button onPress={() => dispatch(fetchPosts())} title="refresh" />
+      <View style={tailwind("flex-1 justify-center items-center")}>
+        {/* <Button onPress={() => dispatch(fetchPosts())} title="refresh" /> */}
       </View>
       <FlatList
         keyExtractor={keyExtractor}

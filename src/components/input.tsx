@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { View, Dimensions, TextInput } from "react-native";
 // import { TextInput } from 'react-native-gesture-handler';
 import styled from "styled-components/native";
@@ -29,9 +29,14 @@ export interface InputProps {
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   textarea?: boolean;
+  value?: string;
 }
 
 const Input: FC<InputProps> = (props) => {
+  // let AddTodo = ({ dispatch }) => {
+  //   const todoInput = useRef();
+  //   useEffect(()=>todoInput.current.clear(),[todoText]);
+
   return (
     <StyledViewContainer>
       {props.textarea ? (
@@ -42,6 +47,7 @@ const Input: FC<InputProps> = (props) => {
           multiline={true}
           //   numberOfLines={"10"}
           textAlignVertical="top"
+          value={props.value}
         />
       ) : (
         <StyledInput
