@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  StatusBar,
-  Text,
-  TouchableHighlight,
-  View,
-} from "react-native";
+import { FlatList, Text, TouchableHighlight, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { Chip, Avatar, ListItem } from "react-native-elements";
 import tailwind from "tailwind-rn";
@@ -15,7 +9,7 @@ import { fetchPosts } from "../redux/posts.slice";
 import { RootState } from "../redux/store";
 import Button from "../components/button";
 
-const Posts = () => {
+const Posts: React.FC = (props: any) => {
   const [statePosts, setStatePosts] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
@@ -50,13 +44,13 @@ const Posts = () => {
     );
   }
 
-  const keyExtractor = (item, index) => index.toString();
+  const keyExtractor = (_, index) => index.toString();
 
   const renderItem = ({ item }) => (
     <ListItem
       bottomDivider
       Component={TouchableHighlight}
-      onPress={() => console.log("onLongPress()")}
+      onPress={() => props.navigation.navigate("Comments", { uid: item.id })}
     >
       <Avatar
         rounded
@@ -66,9 +60,11 @@ const Posts = () => {
       />
       <ListItem.Content>
         <ListItem.Title>Created by : {item.postCreator.name}</ListItem.Title>
+        <ListItem.Subtitle>{item.title}</ListItem.Subtitle>
         <ListItem.Subtitle>
-          <Text style={tailwind("text-red-400 ")}>Status: {item.status} </Text>
-
+          Status:<Text style={tailwind("text-red-400 ")}> {item.status} </Text>
+        </ListItem.Subtitle>
+        <ListItem.Subtitle>
           <Text style={tailwind("text-indigo-800")}>
             {" "}
             {new Date(item.creation.seconds * 1000)

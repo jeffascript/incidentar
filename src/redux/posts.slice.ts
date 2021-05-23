@@ -8,10 +8,15 @@ import store, { AppDispatch, RootState } from "./store";
 
 import { UserData } from "./user.slice";
 
-interface IPosts {
+type creation = {
+  nanoseconds: number;
+  seconds: number;
+};
+
+export interface IPosts {
   id: string;
   comments?: string;
-  creation: string;
+  creation?: creation;
   title: string;
   status: string;
   postCreator?: UserData;

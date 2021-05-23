@@ -22,6 +22,7 @@ import Home from "../screens/Home";
 import { firebaseConfig } from "../utils/firebase";
 import Add from "../screens/Add";
 import Save from "../screens/Save";
+import Comments from "../screens/Comments";
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
@@ -43,6 +44,7 @@ export type NavigatorParamList = {
   Add: undefined;
   Save: undefined;
   Profile: undefined;
+  Comments: { uid: string } | undefined;
   // Login: { userId: string };
   // Feed: { sort: 'latest' | 'top' } | undefined;
 };
@@ -142,6 +144,7 @@ const Main: FC = () => {
               }}
             />
             <Stack.Screen name="Add" component={Add} />
+            <Stack.Screen name="Comments" component={Comments} />
             <Stack.Screen name="Save" component={Save} />
           </Stack.Navigator>
         </NavigationContainer>
