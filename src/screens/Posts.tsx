@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, Text, TouchableHighlight, View } from "react-native";
+import {
+  FlatList,
+  StatusBar,
+  Text,
+  TouchableHighlight,
+  View,
+} from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { Chip, Avatar, ListItem } from "react-native-elements";
 import tailwind from "tailwind-rn";
@@ -35,21 +41,6 @@ const Posts = () => {
   //     // dispatch(fetchAllUsers());
   //     dispatch(fetchPosts());
   //   }, [refresh]);
-
-  const list = [
-    {
-      name: "Amy Farha",
-      avatar_url:
-        "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
-      subtitle: "Vice President",
-    },
-    {
-      name: "Chris Jackson",
-      avatar_url:
-        "https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg",
-      subtitle: "Vice Chairman",
-    },
-  ];
 
   if (postsCount === 0 || posts.length === 0) {
     return (
@@ -91,7 +82,7 @@ const Posts = () => {
   );
 
   return (
-    <View style={tailwind("container")}>
+    <View style={tailwind("flex-1")}>
       {/* <Chip
         title="refresh"
         onPress={() => dispatch(fetchPosts())}
@@ -104,6 +95,8 @@ const Posts = () => {
         keyExtractor={keyExtractor}
         data={posts}
         renderItem={renderItem}
+        refreshing={false}
+        onRefresh={() => dispatch(fetchPosts())}
       />
 
       {/* <Button onPress={() => dispatch(fetchPosts())} title="refresh" /> */}

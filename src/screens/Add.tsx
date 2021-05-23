@@ -117,6 +117,9 @@ const Add: FC = (props: any) => {
     allUsers: { users, loadingUsersStatus },
   } = useSelector((state: RootState) => state);
 
+  // console.log(firebase.firestore.Timestamp.now());
+  // firebase.firestore.FieldValue.serverTimestamp()
+
   const submitNewPost = async () => {
     await firebase
       .firestore()
@@ -125,7 +128,7 @@ const Add: FC = (props: any) => {
       .collection("userPosts")
       .add({
         ...selectedData,
-        creation: firebase.firestore.FieldValue.serverTimestamp(),
+        creation: firebase.firestore.Timestamp.now(),
       })
       .then(() => {
         // setTimeout(() => {
