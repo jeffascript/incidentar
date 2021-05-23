@@ -4,7 +4,7 @@ import {
   SerializedError,
 } from "@reduxjs/toolkit";
 import firebase from "firebase";
-import { AppDispatch, RootState } from "./store";
+import store, { AppDispatch, RootState } from "./store";
 
 import { UserData } from "./user.slice";
 
@@ -14,7 +14,7 @@ interface IPosts {
   creation: string;
   title: string;
   status: string;
-  userId?: string;
+  postCreator?: UserData;
 }
 
 interface IPostState {
@@ -44,16 +44,19 @@ export const fetchPosts = () => {
           if (snapshot) {
             // dispatch(fetchUsersPending());
             console.log("new event happened");
-            // const user = snapshot.docs.map((doc) => {
-            //     const data = doc.data();
-            //     const id = doc.id;
-            //     return { id, ...data, user };
-            //   })
+            const user = snapshot.docs.map((doc) => {
+              console.log({ snapshotPost1: doc.data() });
+              const uid = doc.id;
+              const userData = doc.data() as UserData;
+              dispatch(fetchUsersPostsOnly(uid, userData));
+              // const id = doc.id;
+              // return { id, ...data, user };
+            });
 
-            const uids = snapshot.docs.map((doc) => doc.id);
-            for (let oneUid of uids) {
-              dispatch(fetchUsersPostsOnly(oneUid));
-            }
+            // const uids = snapshot.docs.map((doc) => doc.id);
+            // for (let oneUid of uids) {
+            //   dispatch(fetchUsersPostsOnly(oneUid));
+            // }
           }
         },
         (error) => {
@@ -65,7 +68,7 @@ export const fetchPosts = () => {
 };
 
 let listenerUnsubscribeList2 = [];
-export const fetchUsersPostsOnly = (uid: string) => {
+export const fetchUsersPostsOnly = (uid: string, userData: UserData) => {
   console.log({ paramuid: uid });
   return async (dispatch: AppDispatch) => {
     dispatch(fetchUsersPending());
@@ -77,7 +80,7 @@ export const fetchUsersPostsOnly = (uid: string) => {
       .orderBy("creation", "asc")
       .onSnapshot(
         (snapshot) => {
-          console.log({ snapshotPost: snapshot });
+          console.log({ snapshotPost2: snapshot });
 
           //const res : any = snapshot.query._delegate._query.path.segments[1]
           // @ts-ignore: Unreachable code error
@@ -89,10 +92,17 @@ export const fetchUsersPostsOnly = (uid: string) => {
           const response = snapshot.docs.map((doc) => {
             const data = doc.data();
             const id = doc.id;
-            return { id, ...data };
+            const found = store
+              .getState()
+              .allPosts.posts.some((post) => post.id === id);
+            console.log({ found });
+            if (!found) {
+              dispatch(
+                fetchOnlyPostsSuccess({ id, ...data, postCreator: userData })
+              );
+            }
+            // return { id, ...data, postCreator: userData };
           });
-
-          dispatch(fetchOnlyPostsSuccess(response));
         },
         (error) => {
           dispatch(fetchUsersPostsFailure(error));
@@ -119,40 +129,31 @@ const allPosts = createSlice({
       state.postsDataError = null;
     },
 
-    // fetchUsersSuccess: (state, action) => {
-    //   state.users.push(action.payload);
-    //   state.loadingUsersStatus = "idle";
-    // },
-    // fetchUsersFailure: (state, action) => {
-    //   if (action.payload) state.usersDataError = action.payload;
-    //   state.loadingUsersStatus = "idle";
-    // },
-
-    // fetchUsersPostsSuccess: (state, action) => {
-    //   state.usersLoadedCount = state.usersLoadedCount + 1; //increment the numbers by 1 everytime new user was added
-    //   state.loadingUsersStatus = "idle";
-
-    //   if (action.payload.length > 0) {
-    //     state.users = state.users.map((user) =>
-    //       user.uid === action.payload[0].user.uid
-    //         ? { ...user, posts: action.payload }
-    //         : { ...user, posts: [] }
-    //     );
-    //   }
-    // },
     fetchOnlyPostsSuccess: (state, action) => {
       state.postsStatus = "idle";
 
-      if (action.payload.length > 0) {
+      if (action.payload) {
         state.postsCount = state.postsCount + 1;
-        state.posts.push(action.payload);
+        console.log("payload", action.payload); //returns an array
+        state.posts = [...state.posts, action.payload]; // alternatively, -:  state.posts.push(action.payload[0]); [... breaks open the array an dreturns the bare obj]
+        //state.posts = [...new Set(state.posts.concat(action.payload))]; //set the two arrays and remove duplicates
+
+        //     state.posts = state.posts.map((post) => {
+        //       let found = action.payload.some((payload) => payload.id === post.id);
+
+        //       if (found) {
+        //         return post;
+        //       }
+
+        //       return action.payload;
+        //     });
       }
     },
 
     fetchUsersPostsFailure: (state, action) => {
       state.postsStatus = "idle";
 
-      if (action.payload.length > 0) {
+      if (action.payload) {
         if (action.payload) state.postsDataError = action.payload;
       }
     },

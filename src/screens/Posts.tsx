@@ -3,6 +3,7 @@ import { Button, Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllUsers } from "../redux/allUsers.slice";
+import { fetchPosts } from "../redux/posts.slice";
 import { RootState } from "../redux/store";
 
 const Posts = () => {
@@ -24,65 +25,30 @@ const Posts = () => {
 
   useEffect(() => {
     dispatch(fetchAllUsers());
-  }, [refresh]);
+    dispatch(fetchPosts());
+  }, []);
 
   //   useEffect(() => {
-  //     if (usersLoadedCount === users.length) {
-  //       // for (let i = 0; i < users.length; i++) {
-  //       // //   const user = users.find((el) => el.uid === followingArray[i]); //find the uid from followingArray reduxstate that matches the uid from the users reduxstate
-  //       // //   if (user !== undefined) {
-  //       // //     //since find will return undefined if no result
-  //       // //     thisPosts = [...thisPosts, ...user.posts];
-  //       // //   }
-
-  //       // }
-  //       // thisPosts.sort((a, b) => a.creation - b.creation);
-  //       // setStatePosts(thisPosts);
-
-  //       const allPosts = users.map((user) => user.posts);
-
-  //       console.log({ allPosts });
-  //     }
-  //   }, [usersLoadedCount]);
-
-  //   if (statePosts.length === 0) {
-  //     return <Text>No post ..</Text>;
-  //   }
-
-  //   if (loadingUsersStatus === "loading") {
-  //     return (
-  //       <View>
-  //         <ActivityIndicator size="large" color="#00ff00" />
-  //         <Text> New Posts are available...</Text>
-  //         <Button onPress={() => dispatch(fetchAllUsers())} title="refresh" />
-  //       </View>
-  //     );
-  //   }
+  //     // dispatch(fetchAllUsers());
+  //     dispatch(fetchPosts());
+  //   }, [refresh]);
 
   return (
     <View>
-      {users && users.length > 0
-        ? users.map((a) => (
+      {posts && posts.length > 0
+        ? posts.map((post) => (
             <>
-              {/* <View key={a.uid}>
-                {" "}
-                <Text>userName: {a.name}</Text> */}
-              {a.posts && a.posts.length > 0
-                ? a.posts.map((i) => (
-                    <View key={i.id}>
-                      <Text>
-                        {" "}
-                        userposts by {a.name}: {i.title} ; status: {i.status}
-                      </Text>
-                    </View>
-                  ))
-                : null}
-              {/* </View>{" "} */}
+              <View key={post.id}>
+                <Text>
+                  userposts by {post.postCreator.name}: {post.title} ::: status:{" "}
+                  {post.status}
+                </Text>
+              </View>
             </>
           ))
         : null}
 
-      <Button onPress={() => refreshBtn()} title="refresh" />
+      <Button onPress={() => dispatch(fetchPosts())} title="refresh" />
     </View>
   );
 };
