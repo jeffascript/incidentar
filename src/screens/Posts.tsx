@@ -12,6 +12,7 @@ const Posts = () => {
   const {
     user: { currentUser, userDataError, loadingUserStatus },
     allUsers: { users, loadingUsersStatus, usersLoadedCount },
+    allPosts: { posts, postsCount, postsDataError, postsStatus },
   } = useSelector((state: RootState) => state);
 
   const refreshBtn = () => {
@@ -68,18 +69,20 @@ const Posts = () => {
                 <Text>userName: {a.name}</Text> */}
               {a.posts && a.posts.length > 0
                 ? a.posts.map((i) => (
-                    <React.Fragment key={i.id}>
+                    <View key={i.id}>
                       <Text>
                         {" "}
                         userposts by {a.name}: {i.title} ; status: {i.status}
                       </Text>
-                    </React.Fragment>
+                    </View>
                   ))
                 : null}
               {/* </View>{" "} */}
             </>
           ))
         : null}
+
+      <Button onPress={() => refreshBtn()} title="refresh" />
     </View>
   );
 };

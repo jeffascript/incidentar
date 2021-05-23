@@ -54,6 +54,7 @@ import Input from "../components/input";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { fetchAllUsers } from "../redux/allUsers.slice";
+import { fetchPosts } from "../redux/posts.slice";
 
 const ScreenWidth = Dimensions.get("window").width;
 
@@ -127,11 +128,12 @@ const Add: FC = (props: any) => {
         creation: firebase.firestore.FieldValue.serverTimestamp(),
       })
       .then(() => {
-        setTimeout(() => {
-          dispatch(fetchAllUsers());
-        }, 50);
-
-        // dispatch(fetchAllUsers()); //refetch with current posts
+        // setTimeout(() => {
+        //   dispatch(fetchAllUsers());
+        // }, 50);
+        // dispatch(fetchUsersPostsOnly(firebase.auth().currentUser.uid));
+        dispatch(fetchAllUsers()); //refetch with current posts
+        dispatch(fetchPosts());
         props.navigation.dispatch(StackActions.popToTop()); //used since it is a stack navigator, https://reactnavigation.org/docs/navigation-prop
         // props.navigation.navigate("Home", { refresh: true });
         //props.navigation.dispatch(StackActions.push("Posts"));

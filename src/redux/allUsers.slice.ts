@@ -75,8 +75,7 @@ let listenerUnsubscribeList = [];
 export const fetchAllUsers = () => {
   return async (dispatch: AppDispatch) => {
     dispatch(fetchUsersPending());
-    // const unsubscribe = await
-    firebase
+    const unsubscribe = firebase
       .firestore()
       .collection("users")
       .onSnapshot(
@@ -94,7 +93,7 @@ export const fetchAllUsers = () => {
           dispatch(fetchUsersFailure(error));
         }
       );
-    // listenerUnsubscribeList.push(unsubscribe);
+    listenerUnsubscribeList.push(unsubscribe);
   };
 };
 
@@ -118,6 +117,7 @@ export const fetchUsersData = createAsyncThunk(
             let user = snapshot.data(); //Method for Retrieving a single document from Cloud Firestore
             user.uid = snapshot.id;
             thunkAPI.dispatch(fetchUsersPosts(user.uid)); //setting id to the function redux action creator below
+
             return user;
           });
 
@@ -179,6 +179,7 @@ const initialState = {
   loadingUsersStatus: "idle",
   usersLoadedCount: 0,
   usersDataError: null,
+  posts: [],
 } as IUserState;
 
 const allUsers = createSlice({
