@@ -20,6 +20,7 @@ export interface IPosts {
   title: string;
   status: string;
   postCreator?: UserData;
+  posterUid?: string;
 }
 
 interface IPostState {
@@ -103,7 +104,12 @@ export const fetchUsersPostsOnly = (uid: string, userData: UserData) => {
             console.log({ found });
             if (!found) {
               dispatch(
-                fetchOnlyPostsSuccess({ id, ...data, postCreator: userData })
+                fetchOnlyPostsSuccess({
+                  id,
+                  ...data,
+                  postCreator: userData,
+                  posterUid: uid,
+                })
               );
             }
             // return { id, ...data, postCreator: userData };

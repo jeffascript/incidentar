@@ -4,6 +4,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { FlatList, Text, View } from "react-native";
 import { Badge, Avatar, ListItem } from "react-native-elements";
 import tailwind from "tailwind-rn";
+import firebase from "firebase";
 
 import { useSelector } from "react-redux";
 
@@ -11,6 +12,7 @@ import { NavigatorParamList } from "../navigation/Main";
 import { RootState } from "../redux/store";
 import { IPosts } from "../redux/posts.slice";
 import Input from "../components/input";
+import Button from "../components/button";
 
 type CommentsNavProp = RouteProp<NavigatorParamList, "Comments">;
 type CommentsNavigator = StackNavigationProp<NavigatorParamList, "Comments">;
@@ -21,7 +23,7 @@ interface ICommentsRouter {
 
 interface AddCommentState {
   title?: string;
-  comments?: string;
+  postComment: string;
   status?: string;
 }
 
@@ -31,8 +33,7 @@ const Comments: FC<CommentsProps> = (props) => {
   const [currentPost, setCurrentPost] = useState<IPosts>(null);
 
   const initialState = {
-    title: "",
-    comments: "",
+    postComment: "",
     // status: Status.new,
   };
 
@@ -57,7 +58,35 @@ const Comments: FC<CommentsProps> = (props) => {
       }
     };
     findPostById();
-  }, [props.route.params.uid]);
+  }, [props.route.params.uid, props.route.params.posterUid]);
+
+  const submitNewComment = async () => {
+    await firebase
+      .firestore()
+      .collection("posts")
+      .doc(props.route.params.posterUid) //id of the user who posted
+      .collection("userPosts")
+      .doc(props.route.params.uid) //id of the post params.uid
+      .collection("comments")
+      .add({
+        ...newComment,
+        creation: firebase.firestore.Timestamp.now(),
+        currentUser,
+      })
+      .then(() => {
+        console.log("done");
+
+        // setTimeout(() => {
+        //   dispatch(fetchAllUsers());
+        // }, 50);
+        // dispatch(fetchUsersPostsOnly(firebase.auth().currentUser.uid));
+        //dispatch(fetchAllUsers()); //refetch with current posts
+        //dispatch(fetchPosts());
+        // props.navigation.dispatch(StackActions.popToTop()); //used since it is a stack navigator, https://reactnavigation.org/docs/navigation-prop
+        // props.navigation.navigate("Home", { refresh: true });
+        //props.navigation.dispatch(StackActions.push("Posts"));
+      });
+  };
 
   if (!currentPost) {
     return (
@@ -151,10 +180,11 @@ const Comments: FC<CommentsProps> = (props) => {
         <Input
           placeholder="Add comments here...."
           onChangeText={(text) =>
-            setNewComment({ ...newComment, comments: text })
+            setNewComment({ ...newComment, postComment: text })
           }
           textarea={true}
         />
+        <Button title="submit" onPress={submitNewComment} />
       </View>
 
       {/* comments starts here */}

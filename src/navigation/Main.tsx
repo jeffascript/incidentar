@@ -44,7 +44,7 @@ export type NavigatorParamList = {
   Add: undefined;
   Save: undefined;
   Profile: undefined;
-  Comments: { uid: string } | undefined;
+  Comments: { uid: string; posterUid: string } | undefined;
   // Login: { userId: string };
   // Feed: { sort: 'latest' | 'top' } | undefined;
 };

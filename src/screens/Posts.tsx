@@ -50,7 +50,12 @@ const Posts: React.FC = (props: any) => {
     <ListItem
       bottomDivider
       Component={TouchableHighlight}
-      onPress={() => props.navigation.navigate("Comments", { uid: item.id })}
+      onPress={() =>
+        props.navigation.navigate("Comments", {
+          uid: item.id,
+          posterUid: item.posterUid,
+        })
+      }
     >
       <Avatar
         rounded
