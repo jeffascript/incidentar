@@ -1,12 +1,25 @@
+// import {
+//   API_KEY,
+//   AUTH_DOMAIN,
+//   PROJECT_ID,
+//   STORAGE_BUCKET,
+//   MESSAGING_SENDER_ID,
+//   APP_ID,
+// } from "react-native-dotenv";
+import {
+  API_KEY,
+  AUTH_DOMAIN,
+  PROJECT_ID,
+  STORAGE_BUCKET,
+  MESSAGING_SENDER_ID,
+  APP_ID,
+} from "../../app.config";
+
 export const firebaseConfig = {
-    apiKey: "AIzaSyBvEiGspZ0TaPehraGtEioAPMnDaBEq_Pg",
-    authDomain: "incidentar.firebaseapp.com",
-    projectId: "incidentar",
-    storageBucket: "incidentar.appspot.com",
-    messagingSenderId: "257324047220",
-    appId: "1:257324047220:web:7ce2f0f6319d0bdb9caa21"
-  };
-
-
-
- 
+  apiKey: API_KEY,
+  authDomain: AUTH_DOMAIN,
+  projectId: PROJECT_ID,
+  storageBucket: STORAGE_BUCKET,
+  messagingSenderId: MESSAGING_SENDER_ID,
+  appId: APP_ID,
+};
