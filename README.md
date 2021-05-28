@@ -39,3 +39,5 @@ TypeScript is a superset of JavaScript which gives you static types and powerful
 - [x] Logout
 - [x] Fetch an Make Posts
 - [ ] Admin perspective > assign admin role to a user, set status...
+- [ ] Add the comment count on the post
+- [ ] Fix the input box for adding a comment

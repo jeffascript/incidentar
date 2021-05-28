@@ -68,7 +68,7 @@ const Login: React.FC<LoginProps> = (props) => {
       />
 
       <Input
-        placeholder="Username"
+        placeholder="Email"
         onChangeText={(text) => setUserState({ ...userState, email: text })}
       />
 
