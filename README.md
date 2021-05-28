@@ -33,9 +33,9 @@ TypeScript is a superset of JavaScript which gives you static types and powerful
 
 ## 📝 TODO
 
-[x]- Login and Register Screens
-[x]- Redux
-[x]- Posts and Profile Screens
-[x]- Logout
-[x]- Fetch an Make Posts
-[x] - Admin perspective > assign admin role to a user, set status...
+- [x] Login and Register Screens
+- [x] Redux
+- [x] Posts and Profile Screens
+- [x] Logout
+- [x] Fetch an Make Posts
+- [x] Admin perspective > assign admin role to a user, set status...
