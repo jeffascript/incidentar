@@ -10,7 +10,7 @@
     "@types/react-native-dotenv": "^0.2.0",
     "@types/styled-components": "^5.1.9",
     "dotenv": "^10.0.0",
-    "expo": "~41.0.0",
+    "expo": "~46.0.16",
     "expo-status-bar": "^1.0.4",
     "firebase": "^8.6.1",
     "react": "16.13.1",
